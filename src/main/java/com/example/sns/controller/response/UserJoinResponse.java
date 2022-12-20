@@ -16,7 +16,7 @@ public class UserJoinResponse {
     public static UserJoinResponse userDtoToRes(UserDto dto){
         return new UserJoinResponse(
                 dto.getId(),
-                dto.getUserName(),
+                dto.getUsername(),
                 dto.getUserRole()
         );
     }

@@ -17,4 +17,22 @@ public class PolymorphismResponse<T> {
     public static <T> PolymorphismResponse<T> success(T result) {
         return new PolymorphismResponse<>("SUCCESS", result);
     }
+
+    public static <T> PolymorphismResponse<Void> success() {
+        return new PolymorphismResponse<Void>("SUCCESS", null);
+    }
+
+    public String toStream(){
+
+        if (result == null){
+            return "{" +
+                    "\"resultCode\":" + "\"" + resultCode + "\"," +
+                    "\"result\":" + null + "}";
+        }
+
+        return "{" +
+                "\"resultCode\":" + "\"" + resultCode + "\"," +
+                "\"result\":" + null + "}";
+    }
+
 }
