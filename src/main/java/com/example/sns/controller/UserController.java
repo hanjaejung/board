@@ -1,8 +1,10 @@
 package com.example.sns.controller;
 
 import com.example.sns.controller.request.UserJoinRequest;
+import com.example.sns.controller.request.UserLoginRequest;
 import com.example.sns.controller.response.PolymorphismResponse;
 import com.example.sns.controller.response.UserJoinResponse;
+import com.example.sns.controller.response.UserLoginResponse;
 import com.example.sns.model.UserDto;
 import com.example.sns.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +31,12 @@ public class UserController {
         //public getter메소드가 필요하다
         //UserJoinResponse클래스에 getter메소드가 없어서 no properties discovered관련에러가 떳었다
         return PolymorphismResponse.success(response);
+    }
+
+    @PostMapping("/login")
+    public PolymorphismResponse<UserLoginResponse> login(@RequestBody UserLoginRequest request){
+        String token = userService.login(request.getUserName(), request.getUserPassword());
+
+        return PolymorphismResponse.success(new UserLoginResponse(token));
     }
 }

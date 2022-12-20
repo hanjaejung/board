@@ -7,7 +7,7 @@ spring:
         format_sql: true
     database: mysql
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   datasource:
     url: jdbc:mysql://localhost:3306/book_manager
     username: root
@@ -15,5 +15,9 @@ spring:
     initialization-mode: always
 server:
   port:  8080
+jwt:
+  secret-key: fast-campus.simple_sns_2022_secret_key
+  # 30 days
+  token.expired-time-ms: 2592000000
 
 

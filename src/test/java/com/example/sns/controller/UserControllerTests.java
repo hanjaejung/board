@@ -41,7 +41,7 @@ public class UserControllerTests {
         // TODO : mocking
         when(userService.join(userName, passWord)).thenReturn(mock(UserDto.class));
 
-        mockMvc.perform(post("api/sns/users/join")
+        mockMvc.perform(post("/api/sns/users/join")
                 .contentType(MediaType.APPLICATION_JSON)
                 //TODO : add request body
                 //writeValueAsBytes는 Java 오브젝트로 부터 JSON을 만들고 이를 문자열 혹은 Byte 배열로 반환
@@ -59,14 +59,14 @@ public class UserControllerTests {
         // TODO : mocking
         //다른 exception이 올 수 있으니 고효율 모듈인 exception클래스를 하나더 만들어
         //이 부분을 수정안하게 한다
-        when(userService.join(userName, passWord)).thenThrow(new SnsException(ErrorCode.SAME_USER_NAME, ""));
-
-        mockMvc.perform(post("api/sns/join")
+        when(userService.join(userName, passWord)).thenThrow(new SnsException(ErrorCode.SAME_USER_NAME));
+        System.out.println("????????? : " + ErrorCode.SAME_USER_NAME.getStatus().value());
+        mockMvc.perform(post("/api/sns/users/join")
                         .contentType(MediaType.APPLICATION_JSON)
                         //TODO : add request body
                         .content(objectMapper.writeValueAsBytes(new UserJoinRequest(userName, passWord)))
                 ).andDo(print())
-                .andExpect(status().isConflict());
+                .andExpect(status().is(ErrorCode.SAME_USER_NAME.getStatus().value()));
 
     }
 
@@ -78,7 +78,7 @@ public class UserControllerTests {
         // TODO : mocking
         when(userService.login(userName, password)).thenReturn("");
 
-        mockMvc.perform(post("api/sns/users/login")
+        mockMvc.perform(post("/api/sns/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         //TODO : add request body
                         //writeValueAsBytes는 Java 오브젝트로 부터 JSON을 만들고 이를 문자열 혹은 Byte 배열로 반환
@@ -94,9 +94,9 @@ public class UserControllerTests {
         String password = "password";
 
         // TODO : mocking
-        when(userService.login(userName, password)).thenThrow(new SnsException(ErrorCode.SAME_USER_NAME, ""));
+        when(userService.login(userName, password)).thenThrow(new SnsException(ErrorCode.USER_EXIST_NOT));
 
-        mockMvc.perform(post("api/sns/users/login")
+        mockMvc.perform(post("/api/sns/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         //TODO : add request body
                         //writeValueAsBytes는 Java 오브젝트로 부터 JSON을 만들고 이를 문자열 혹은 Byte 배열로 반환
@@ -112,9 +112,9 @@ public class UserControllerTests {
         String password = "password";
 
         // TODO : mocking
-        when(userService.login(userName, password)).thenThrow(new SnsException(ErrorCode.SAME_USER_NAME, ""));
+        when(userService.login(userName, password)).thenThrow(new SnsException(ErrorCode.INVALID_PASSWORD, ""));
 
-        mockMvc.perform(post("api/sns/users/login")
+        mockMvc.perform(post("/api/sns/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         //TODO : add request body
                         //writeValueAsBytes는 Java 오브젝트로 부터 JSON을 만들고 이를 문자열 혹은 Byte 배열로 반환
