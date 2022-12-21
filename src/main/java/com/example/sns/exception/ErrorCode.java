@@ -13,6 +13,8 @@ public enum ErrorCode {
     USER_EXIST_NOT(HttpStatus.NOT_FOUND, "user do not exist"),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "password wrong"),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Token is invalid"),
+    BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "Board not founded"),
+    INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "Permission is invalid"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"),
     ;
 

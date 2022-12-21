@@ -43,7 +43,7 @@ public class UserServiceTest {
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());
         when(encoder.encode(password)).thenReturn("encrypt_password");
         //when(userEntityRepository.save(any())).thenReturn(Optional.of(mock(UserEntity.class)));
-        when(userEntityRepository.save(any())).thenReturn(UserEntityFixture.get(userName, password));
+        when(userEntityRepository.save(any())).thenReturn(UserEntityFixture.get(userName, password, 1L));
         //회원가입테스트도 마찬가지로 mocking이 아닌 fixture 적용
 
         Assertions.assertDoesNotThrow(() -> userService.join(userName, password));
@@ -55,7 +55,7 @@ public class UserServiceTest {
         String userName = "userName";
         String password = "password";
 
-        UserEntity fixture = UserEntityFixture.get(userName, password);
+        UserEntity fixture = UserEntityFixture.get(userName, password, 1L);
 
         //이쪽도 fixture로 변경
         //when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(mock(UserEntity.class)));
@@ -74,7 +74,7 @@ public class UserServiceTest {
         String userName = "userName";
         String password = "password";
         //mocking으로 가상의 구현체를 만들기보다는 fixture로 가상의 구현체를 만든다
-        UserEntity fixture = UserEntityFixture.get(userName, password);
+        UserEntity fixture = UserEntityFixture.get(userName, password, 1L);
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
         when(encoder.matches(password, fixture.getPassword())).thenReturn(true);
@@ -104,7 +104,7 @@ public class UserServiceTest {
         String password = "password";
         String wrongPassword = "wrongPassword";
 
-        UserEntity fixture = UserEntityFixture.get(userName, password);
+        UserEntity fixture = UserEntityFixture.get(userName, password, 1L);
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
 
