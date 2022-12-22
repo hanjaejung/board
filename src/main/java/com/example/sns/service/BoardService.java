@@ -55,4 +55,21 @@ public class BoardService {
         //save() 메소드와는 다르게 saveAndFlush() 메소드는 실행중(트랜잭션)에 즉시 data를 flush 한다
         //saveAndFlush() 메소드는 Spring Data JPA 에서 정의한 JpaRepository 인터페이스의 메소드이다
     }
+
+    @Transactional
+    public void delete(String userName, Long boardId){
+
+        UserEntity userEntity = userEntityRepository.findByUserName(userName)
+                .orElseThrow(() ->
+                        new SnsException(ErrorCode.USER_EXIST_NOT, String.format("%s do not exist", userName)));
+
+        BoardEntity boardEntity = boardEntityRepository.findById(boardId).orElseThrow(() ->
+                new SnsException(ErrorCode.BOARD_NOT_FOUND, String.format("%s not founded", "boardId")));
+
+        if(boardEntity.getUser() != userEntity){
+            throw new SnsException(ErrorCode.INVALID_PERMISSION, String.format("%s has no permission with %s", userName, boardId));
+        }
+
+        boardEntityRepository.delete(boardEntity);
+    }
 }

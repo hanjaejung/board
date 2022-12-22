@@ -28,4 +28,10 @@ public class BoardController {
         BoardDto boardDto = boardService.update(request.getTitle(), request.getBody(), authentication.getName(), boardId);
         return PolymorphismResponse.success(BoardResponse.boardDtoToBoardResponse(boardDto));
     }
+
+    @DeleteMapping("/{boardId}")
+    public PolymorphismResponse<Void> delete(@PathVariable Long boardId, Authentication authentication){
+        boardService.delete(authentication.getName(), boardId);
+        return PolymorphismResponse.success();
+    }
 }

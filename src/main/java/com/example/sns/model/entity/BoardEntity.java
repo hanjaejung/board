@@ -13,8 +13,8 @@ import java.time.Instant;
 @Setter
 @Getter
 @Entity
-@Table(name = "\"board\"")
-@SQLDelete(sql = "UPDATE \"board\" SET removed_at = NOW() WHERE id=?")
+@Table(name = "board")
+@SQLDelete(sql = "UPDATE board SET deleted_at = NOW() WHERE id=?")
 @Where(clause = "deleted_at is NULL")
 public class BoardEntity {
 

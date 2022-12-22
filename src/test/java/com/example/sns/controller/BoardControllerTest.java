@@ -23,8 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.Mockito.when;
@@ -110,5 +109,45 @@ public class BoardControllerTest {
                         .content(objectMapper.writeValueAsBytes(new BoardUpdateRequest("title", "body"))))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    void boardDeleteTest() throws Exception {
+
+        mockMvc.perform(delete("/api/board/1")
+                        .contentType(MediaType.APPLICATION_JSON)).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void boardDeleteDoNotLoginTest() throws Exception {
+
+        mockMvc.perform(delete("/api/board/1")
+                        .contentType(MediaType.APPLICATION_JSON)).andDo(print())
+                .andExpect(status().is(ErrorCode.INTERNAL_SERVER_ERROR.getStatus().value()));
+    }
+
+    @Test
+    @WithAnonymousUser
+    void boardDeleteDoNotWriterTest() throws Exception {
+
+        doThrow(new SnsException(ErrorCode.INVALID_PERMISSION)).when(boardService).delete(any(), any());
+
+        mockMvc.perform(delete("/api/board/1")
+                        .contentType(MediaType.APPLICATION_JSON)).andDo(print())
+                .andExpect(status().is(ErrorCode.INTERNAL_SERVER_ERROR.getStatus().value()));
+    }
+
+    @Test
+    @WithAnonymousUser
+    void boardDeleteDoNotExistBoardTest() throws Exception {
+
+        doThrow(new SnsException(ErrorCode.BOARD_NOT_FOUND)).when(boardService).delete(any(), any());
+
+        mockMvc.perform(delete("/api/board/1")
+                        .contentType(MediaType.APPLICATION_JSON)).andDo(print())
+                .andExpect(status().is(ErrorCode.INTERNAL_SERVER_ERROR.getStatus().value()));
     }
 }

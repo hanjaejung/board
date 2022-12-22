@@ -109,4 +109,48 @@ public class BoardServiceTest {
         SnsException exception = Assertions.assertThrows(SnsException.class, () -> boardService.update(title, body, userName, id));
         Assertions.assertEquals(ErrorCode.INVALID_PERMISSION, exception.getErrorCode());
     }
+
+    @Test
+    void boardDeleteTest() throws Exception {
+        String userName = "userName";
+        Long id = 1L;
+
+        BoardEntity entity = BoardEntityFixture.get(userName,id, 1l);
+        UserEntity userEntity = entity.getUser();
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
+        when(boardEntityRepository.findById(id)).thenReturn(Optional.of(entity));
+
+        Assertions.assertDoesNotThrow(() -> boardService.delete(userName, 1L));
+    }
+
+    @Test
+    void boardDeleteDoNotExistBoardTest() throws Exception {
+        String userName = "userName";
+        Long id = 1L;
+
+        BoardEntity entity = BoardEntityFixture.get(userName,id, 1l);
+        UserEntity userEntity = entity.getUser();
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
+        when(boardEntityRepository.findById(id)).thenReturn(Optional.empty());
+
+        SnsException exception = Assertions.assertThrows(SnsException.class, () -> boardService.delete(userName, 1L));
+        Assertions.assertEquals(ErrorCode.BOARD_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    void boardDeleteDoNotExistAuthorityTest() throws Exception {
+        String userName = "userName";
+        Long id = 1L;
+
+        BoardEntity entity = BoardEntityFixture.get(userName,id, 1L);
+        UserEntity writerEntity = UserEntityFixture.get("AnotherUserName", "password", 2l);
+
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(writerEntity));
+        when(boardEntityRepository.findById(id)).thenReturn(Optional.of(entity));
+
+        SnsException exception = Assertions.assertThrows(SnsException.class, () -> boardService.delete(userName, 1L));
+        Assertions.assertEquals(ErrorCode.INVALID_PERMISSION, exception.getErrorCode());
+    }
 }

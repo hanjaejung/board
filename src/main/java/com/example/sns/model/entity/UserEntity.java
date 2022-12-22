@@ -17,8 +17,8 @@ import java.time.Instant;
 @Setter
 @Getter
 @Entity
-@Table(name = "\"user\"")
-@SQLDelete(sql = "UPDATE \"user\" SET removed_at = NOW() WHERE id=?")
+@Table(name = "user")
+@SQLDelete(sql = "UPDATE user SET deleted_at = NOW() WHERE id=?")
 @Where(clause = "deleted_at is NULL") //select절 수행시 삭제된거는 빼고 보여야 하기 때문에 작성
 @NoArgsConstructor
 public class UserEntity {
