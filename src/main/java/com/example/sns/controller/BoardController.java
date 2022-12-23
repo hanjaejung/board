@@ -7,8 +7,11 @@ import com.example.sns.controller.response.PolymorphismResponse;
 import com.example.sns.model.BoardDto;
 import com.example.sns.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/api/board")
@@ -33,5 +36,15 @@ public class BoardController {
     public PolymorphismResponse<Void> delete(@PathVariable Long boardId, Authentication authentication){
         boardService.delete(authentication.getName(), boardId);
         return PolymorphismResponse.success();
+    }
+
+    @GetMapping
+    public PolymorphismResponse<Page<BoardResponse>> boardList(Pageable pageable, Authentication authentication){
+        return PolymorphismResponse.success(boardService.boardList(pageable).map(BoardResponse::boardDtoToBoardResponse));
+    }
+
+    @GetMapping("/my")
+    public PolymorphismResponse<Page<BoardResponse>> myBoardList(Pageable pageable, Authentication authentication){
+        return PolymorphismResponse.success(boardService.myBoardList(authentication.getName(), pageable).map(BoardResponse::boardDtoToBoardResponse));
     }
 }

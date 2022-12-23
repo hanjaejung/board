@@ -87,7 +87,7 @@ function Basic() {
     console.log(password);
 
     axios({
-      url: '/api/v1/users/login',
+      url: '/api/sns/users/login',
       method: 'POST',
       data: {
         name: userName,

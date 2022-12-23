@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import static org.mockito.Mockito.mock;
 
@@ -152,5 +154,25 @@ public class BoardServiceTest {
 
         SnsException exception = Assertions.assertThrows(SnsException.class, () -> boardService.delete(userName, 1L));
         Assertions.assertEquals(ErrorCode.INVALID_PERMISSION, exception.getErrorCode());
+    }
+
+    @Test
+    void boardListTest() throws Exception {
+
+        Pageable pageable = mock(Pageable.class);
+        when(boardEntityRepository.findAll(pageable)).thenReturn(Page.empty());
+
+        Assertions.assertDoesNotThrow(() -> boardService.boardList(pageable));
+    }
+
+    @Test
+    void myBoardListTest() throws Exception {
+
+        Pageable pageable = mock(Pageable.class);
+        UserEntity userEntity = mock(UserEntity.class);
+        when(userEntityRepository.findByUserName(any())).thenReturn(Optional.of(userEntity));
+        when(boardEntityRepository.findAllByUser(userEntity, pageable)).thenReturn(Page.empty());
+
+        Assertions.assertDoesNotThrow(() -> boardService.myBoardList("", pageable));
     }
 }

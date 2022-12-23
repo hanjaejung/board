@@ -27,14 +27,17 @@ public class AuthenticationConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/*/users/join", "/api/*/users/login").permitAll() //여기 경로는 모두 허용
-                .antMatchers("api/**").authenticated() //여기서 선택된 경로는 header의 jwt토큰인증을 받아야 한다
+                .antMatchers("/api/**").authenticated() //여기서 선택된 경로는 header의 jwt토큰인증을 받아야 한다
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(new JwtTokenFilter(secretKey, userService), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
-                .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .and()
+                .addFilterBefore(new JwtTokenFilter(secretKey, userService), UsernamePasswordAuthenticationFilter.class);
+
+
         //addFilterBefore(A, B) B이전에 A를 적용해라
 
     }

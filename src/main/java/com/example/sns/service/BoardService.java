@@ -8,6 +8,8 @@ import com.example.sns.model.entity.UserEntity;
 import com.example.sns.repository.BoardEntityRepository;
 import com.example.sns.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,5 +73,20 @@ public class BoardService {
         }
 
         boardEntityRepository.delete(boardEntity);
+    }
+
+    public Page<BoardDto> boardList(Pageable pageable){
+
+        return boardEntityRepository.findAll(pageable).map(BoardDto::entityToDto);
+    }
+
+    public Page<BoardDto> myBoardList(String userName, Pageable pageable){
+
+        UserEntity userEntity = userEntityRepository.findByUserName(userName)
+                .orElseThrow(() ->
+                        new SnsException(ErrorCode.USER_EXIST_NOT, String.format("%s do not exist", userName)));
+
+        return boardEntityRepository.findAllByUser(userEntity, pageable).map(BoardDto::entityToDto);
+
     }
 }

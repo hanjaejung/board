@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -147,6 +148,42 @@ public class BoardControllerTest {
         doThrow(new SnsException(ErrorCode.BOARD_NOT_FOUND)).when(boardService).delete(any(), any());
 
         mockMvc.perform(delete("/api/board/1")
+                        .contentType(MediaType.APPLICATION_JSON)).andDo(print())
+                .andExpect(status().is(ErrorCode.INTERNAL_SERVER_ERROR.getStatus().value()));
+    }
+
+    @Test
+    @WithMockUser
+    void boardListTest() throws Exception {
+        when(boardService.boardList(any())).thenReturn(Page.empty());
+        mockMvc.perform(get("/api/board")
+                        .contentType(MediaType.APPLICATION_JSON)).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void boardListDoNotLoginTest() throws Exception {
+        when(boardService.boardList(any())).thenReturn(Page.empty());
+        mockMvc.perform(get("/api/board")
+                        .contentType(MediaType.APPLICATION_JSON)).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void myBoardListTest() throws Exception {
+        when(boardService.myBoardList(any(), any())).thenReturn(Page.empty());
+        mockMvc.perform(get("/api/board/my")
+                        .contentType(MediaType.APPLICATION_JSON)).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void myBoardListDoNotLoginTest() throws Exception {
+        when(boardService.myBoardList(any(), any())).thenReturn(Page.empty());
+        mockMvc.perform(get("/api/board/my")
                         .contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 .andExpect(status().is(ErrorCode.INTERNAL_SERVER_ERROR.getStatus().value()));
     }

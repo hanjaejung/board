@@ -24,7 +24,7 @@ public class UserController {
     //생길경우 이 클래스에서 수정하는 일이 없어 결합성이 좀 더 낮아진다
     @PostMapping("/join")
     public PolymorphismResponse<UserJoinResponse> join(@RequestBody UserJoinRequest request){
-        UserDto dto = userService.join(request.getUserName(), request.getUserPassword());
+        UserDto dto = userService.join(request.getName(), request.getPassword());
         UserJoinResponse response = UserJoinResponse.userDtoToRes(dto);
 
         //success메소드는 public 메소드라 UserJoinResponse클래스의 private필드값을 받으려면
@@ -35,7 +35,7 @@ public class UserController {
 
     @PostMapping("/login")
     public PolymorphismResponse<UserLoginResponse> login(@RequestBody UserLoginRequest request){
-        String token = userService.login(request.getUserName(), request.getUserPassword());
+        String token = userService.login(request.getName(), request.getPassword());
 
         return PolymorphismResponse.success(new UserLoginResponse(token));
     }
