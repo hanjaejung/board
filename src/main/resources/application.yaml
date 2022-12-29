@@ -13,10 +13,12 @@ spring:
     username: root
     password: 1368
     initialization-mode: always
+  redis:
+    url:
 server:
   port:  8080
 jwt:
-  secret-key: fast-campus.simple_sns_2022_secret_key
+  secret-key: hanjaejung-create.board_project_2022_secret_key
   # 30 days
   token.expired-time-ms: 2592000000
 
