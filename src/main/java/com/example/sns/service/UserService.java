@@ -4,6 +4,7 @@ import com.example.sns.exception.ErrorCode;
 import com.example.sns.exception.SnsException;
 import com.example.sns.model.UserDto;
 import com.example.sns.model.entity.UserEntity;
+import com.example.sns.repository.UserDtoCacheRepository;
 import com.example.sns.repository.UserEntityRepository;
 import com.example.sns.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +24,19 @@ public class UserService {
 
     private final BCryptPasswordEncoder encoder;
 
+    private final UserDtoCacheRepository userDtoCacheRepository;
+
     @Value("${jwt.secret-key}")
     private String secretKey;
 
     @Value("${jwt.token.expired-time-ms}")
     private Long expiredTimeMs;
 
-    public UserDto loadUserByUserName(String userName){
-        return userEntityRepository.findByUserName(userName).map(UserDto::entityToDto).orElseThrow(
-                        () -> new SnsException(ErrorCode.SAME_USER_NAME, String.format("userName is %s", userName)));
+    public UserDto loadUserByUserName(String userName){ //결국 캐시를 만든다는건 메소드로 하나 빼논다는것
+        return  userDtoCacheRepository.getUser(userName).orElseGet(() -> //orElseGet은 캐시에 올라가지 않은상태일경우에 db로 체크한다는 뜻
+                userEntityRepository.findByUserName(userName).map(UserDto::entityToDto).orElseThrow(
+                        () -> new SnsException(ErrorCode.SAME_USER_NAME, String.format("userName is %s", userName)))
+        );
     }
 
     @Transactional
@@ -52,10 +57,13 @@ public class UserService {
     public String login(String userName, String password){
 
         // 회원가입이 되어 있지 않는 경우
-        UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() -> new SnsException(ErrorCode.USER_EXIST_NOT, String.format("%s do not exist", userName)));
+        //UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() -> new SnsException(ErrorCode.USER_EXIST_NOT, String.format("%s do not exist", userName)));
+        UserDto userDto = loadUserByUserName(userName);
+
+        userDtoCacheRepository.setUser(userDto); //로그인시 캐시셋
 
         //비밀번호 확인
-        if(!encoder.matches(password, userEntity.getPassword())){
+        if(!encoder.matches(password, userDto.getPassword())){
             throw new SnsException(ErrorCode.INVALID_PASSWORD, "password wrong");
         }
 
