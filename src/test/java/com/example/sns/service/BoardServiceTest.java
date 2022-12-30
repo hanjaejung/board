@@ -1,7 +1,8 @@
 package com.example.sns.service;
 
+import com.example.sns.controller.request.BoardCommentRequest;
 import com.example.sns.exception.ErrorCode;
-import com.example.sns.exception.SnsException;
+import com.example.sns.exception.BoardException;
 import com.example.sns.fixture.BoardEntityFixture;
 import com.example.sns.fixture.UserEntityFixture;
 import com.example.sns.model.entity.BoardEntity;
@@ -15,14 +16,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 
-import static org.mockito.Mockito.mock;
-
-import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 public class BoardServiceTest {
@@ -57,7 +62,7 @@ public class BoardServiceTest {
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());
         when(boardEntityRepository.save(any())).thenReturn(mock(BoardEntity.class));
 
-        SnsException exception = Assertions.assertThrows(SnsException.class, () -> boardService.write(title, body, userName));
+        BoardException exception = Assertions.assertThrows(BoardException.class, () -> boardService.write(title, body, userName));
         Assertions.assertEquals(ErrorCode.USER_EXIST_NOT, exception.getErrorCode());
     }
 
@@ -91,7 +96,7 @@ public class BoardServiceTest {
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
         when(boardEntityRepository.findById(id)).thenReturn(Optional.empty());
 
-        SnsException exception = Assertions.assertThrows(SnsException.class, () -> boardService.update(title, body, userName, id));
+        BoardException exception = Assertions.assertThrows(BoardException.class, () -> boardService.update(title, body, userName, id));
         Assertions.assertEquals(ErrorCode.BOARD_NOT_FOUND, exception.getErrorCode());
     }
 
@@ -108,7 +113,7 @@ public class BoardServiceTest {
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(writerEntity));
         when(boardEntityRepository.findById(id)).thenReturn(Optional.of(entity));
 
-        SnsException exception = Assertions.assertThrows(SnsException.class, () -> boardService.update(title, body, userName, id));
+        BoardException exception = Assertions.assertThrows(BoardException.class, () -> boardService.update(title, body, userName, id));
         Assertions.assertEquals(ErrorCode.INVALID_PERMISSION, exception.getErrorCode());
     }
 
@@ -137,7 +142,7 @@ public class BoardServiceTest {
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
         when(boardEntityRepository.findById(id)).thenReturn(Optional.empty());
 
-        SnsException exception = Assertions.assertThrows(SnsException.class, () -> boardService.delete(userName, 1L));
+        BoardException exception = Assertions.assertThrows(BoardException.class, () -> boardService.delete(userName, 1L));
         Assertions.assertEquals(ErrorCode.BOARD_NOT_FOUND, exception.getErrorCode());
     }
 
@@ -152,7 +157,7 @@ public class BoardServiceTest {
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(writerEntity));
         when(boardEntityRepository.findById(id)).thenReturn(Optional.of(entity));
 
-        SnsException exception = Assertions.assertThrows(SnsException.class, () -> boardService.delete(userName, 1L));
+        BoardException exception = Assertions.assertThrows(BoardException.class, () -> boardService.delete(userName, 1L));
         Assertions.assertEquals(ErrorCode.INVALID_PERMISSION, exception.getErrorCode());
     }
 
@@ -174,5 +179,92 @@ public class BoardServiceTest {
         when(boardEntityRepository.findAllByUser(userEntity, pageable)).thenReturn(Page.empty());
 
         Assertions.assertDoesNotThrow(() -> boardService.myBoardList("", pageable));
+    }
+
+    @Test
+    void likeTest() throws Exception {
+        String userName = "userName";
+        Long id = 1L;
+
+        BoardEntity entity = BoardEntityFixture.get(userName,id, 1l);
+        UserEntity userEntity = entity.getUser();
+
+        when(boardEntityRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
+
+        Assertions.assertDoesNotThrow(() -> boardService.like(id, userName));
+        //이 테스트 에러나는 이유 위의 findById, findByUserName에서 에러가 안나도
+        //like 서비스에 있는 동일한 userName이 있다는 ALREADY_LIKED_BOARD에러에 걸린다
+    }
+
+    @Test
+    void doNotLoginLikeTest() throws Exception {
+            String userName = "userName";
+            Long id = 1L;
+
+            BoardEntity entity = BoardEntityFixture.get(userName,id, 1l);
+            UserEntity userEntity = entity.getUser();
+
+            when(boardEntityRepository.findById(id)).thenReturn(Optional.of(entity));
+            when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());
+
+            BoardException exception = Assertions.assertThrows(BoardException.class, () -> boardService.like(id, userName));
+            Assertions.assertEquals(ErrorCode.USER_EXIST_NOT, exception.getErrorCode());
+    }
+
+    @Test
+    void doNotExistBoardLikeTest() throws Exception {
+            String userName = "userName";
+            Long id = 1L;
+
+            BoardEntity entity = BoardEntityFixture.get(userName,id, 1l);
+
+            when(boardEntityRepository.findById(id)).thenReturn(Optional.empty());
+
+            BoardException exception = Assertions.assertThrows(BoardException.class, () -> boardService.like(id, userName));
+            Assertions.assertEquals(ErrorCode.BOARD_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    void commentWriteTest() throws Exception {
+        String userName = "userName";
+        Long id = 1L;
+
+        BoardEntity entity = BoardEntityFixture.get(userName,id, 1l);
+        UserEntity userEntity = entity.getUser();
+
+        when(boardEntityRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
+
+        Assertions.assertDoesNotThrow(() -> boardService.comment(id, userName, "testComment"));
+    }
+
+
+    @Test
+    void doNotLoginCommentWriteTest() throws Exception {
+        String userName = "userName";
+            Long id = 1L;
+
+            BoardEntity entity = BoardEntityFixture.get(userName,id, 1l);
+            UserEntity userEntity = entity.getUser();
+
+            when(boardEntityRepository.findById(id)).thenReturn(Optional.of(entity));
+            when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());
+
+            BoardException exception = Assertions.assertThrows(BoardException.class, () -> boardService.comment(id, userName, "testComment"));
+            Assertions.assertEquals(ErrorCode.USER_EXIST_NOT, exception.getErrorCode());
+    }
+
+    @Test
+    void doNotExistBoardCommentWriteTest() throws Exception {
+        String userName = "userName";
+            Long id = 1L;
+
+            BoardEntity entity = BoardEntityFixture.get(userName,id, 1l);
+
+            when(boardEntityRepository.findById(id)).thenReturn(Optional.empty());
+
+            BoardException exception = Assertions.assertThrows(BoardException.class, () -> boardService.comment(id, userName, "testComment"));
+            Assertions.assertEquals(ErrorCode.BOARD_NOT_FOUND, exception.getErrorCode());
     }
 }

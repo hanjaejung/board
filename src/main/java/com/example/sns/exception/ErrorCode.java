@@ -14,6 +14,7 @@ public enum ErrorCode {
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "password wrong"),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Token is invalid"),
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "Board not founded"),
+    ALREADY_LIKED_BOARD(HttpStatus.CONFLICT, "user already like the board"),
     INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "Permission is invalid"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"),
     ;

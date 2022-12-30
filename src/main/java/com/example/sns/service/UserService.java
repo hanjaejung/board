@@ -1,14 +1,13 @@
 package com.example.sns.service;
 
 import com.example.sns.exception.ErrorCode;
-import com.example.sns.exception.SnsException;
+import com.example.sns.exception.BoardException;
 import com.example.sns.model.UserDto;
 import com.example.sns.model.entity.UserEntity;
 import com.example.sns.repository.UserDtoCacheRepository;
 import com.example.sns.repository.UserEntityRepository;
 import com.example.sns.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,7 +34,7 @@ public class UserService {
     public UserDto loadUserByUserName(String userName){ //결국 캐시를 만든다는건 메소드로 하나 빼논다는것
         return  userDtoCacheRepository.getUser(userName).orElseGet(() -> //orElseGet은 캐시에 올라가지 않은상태일경우에 db로 체크한다는 뜻
                 userEntityRepository.findByUserName(userName).map(UserDto::entityToDto).orElseThrow(
-                        () -> new SnsException(ErrorCode.SAME_USER_NAME, String.format("userName is %s", userName)))
+                        () -> new BoardException(ErrorCode.SAME_USER_NAME, String.format("userName is %s", userName)))
         );
     }
 
@@ -47,7 +46,7 @@ public class UserService {
         //있으면 무언가를 발생기키게함
         //isPresent는 값이 있으면 true, 없으면 false 출력
         userEntityRepository.findByUserName(userName).ifPresent(it ->
-        {throw new SnsException(ErrorCode.SAME_USER_NAME, String.format("%s is exist", userName));});
+        {throw new BoardException(ErrorCode.SAME_USER_NAME, String.format("%s is exist", userName));});
 
         UserEntity userEntity = userEntityRepository.save(UserEntity.of(userName, encoder.encode(password)));
 
@@ -64,7 +63,7 @@ public class UserService {
 
         //비밀번호 확인
         if(!encoder.matches(password, userDto.getPassword())){
-            throw new SnsException(ErrorCode.INVALID_PASSWORD, "password wrong");
+            throw new BoardException(ErrorCode.INVALID_PASSWORD, "password wrong");
         }
 
 

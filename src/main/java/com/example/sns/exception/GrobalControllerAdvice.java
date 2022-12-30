@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GrobalControllerAdvice {
 
     //컨트롤러에서 익셉션을 처리하기 위해 만든 익셉션핸들러
-    @ExceptionHandler(SnsException.class)
-    public ResponseEntity<?> applicationHandler(SnsException e){
+    @ExceptionHandler(BoardException.class)
+    public ResponseEntity<?> applicationHandler(BoardException e){
         log.error("error occurs {}", e.toString());
         return ResponseEntity.status(e.getErrorCode().getStatus())
                 .body(PolymorphismResponse.error(e.getErrorCode().name()));

@@ -23,7 +23,7 @@ public class RedisConfiguration {
     @Bean
     public RedisConnectionFactory redisConnectionFactory(){
         //RedisURI redisURI = RedisURI.create(redisProperties.getUrl());
-       // org.springframework.data.redis.connection.RedisConfiguration configuration = LettuceConnectionFactory.createRedisConfiguration(redisURI);
+        //org.springframework.data.redis.connection.RedisConfiguration configuration = LettuceConnectionFactory.createRedisConfiguration(redisURI);
         LettuceConnectionFactory factory = new LettuceConnectionFactory("localhost", 6379);
         factory.afterPropertiesSet();
         return factory;

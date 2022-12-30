@@ -15,7 +15,6 @@ Coded by www.creative-tim.com
 
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import {useNavigate} from 'react-router';
 
 // @mui material components
@@ -27,22 +26,12 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDInput from 'components/MDInput';
-import MDButton from 'components/MDButton';
 import MDPagination from 'components/MDPagination';
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from 'examples/Footer';
-import DataTable from 'examples/Tables/DataTable';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Slide from '@mui/material/Slide';
+
 
 // Data
 import axios from 'axios';
@@ -50,15 +39,10 @@ import axios from 'axios';
 function Tables() {
 
   const [page, setPage] = useState(0);
-  const [render, setRender] = useState(false);
   const [tables, setTables] = useState([]);
   const [totalPage, setTotalPage] = useState(0);
 
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
   const [open, setOpen] = React.useState(false);
-  const [dialogTitle, setDialogTitle] = React.useState('');
-  const [dialogMessage, setDialogMessage] = React.useState('');
   const navigate = useNavigate();
 
   const handleDetail = (table) => {
@@ -110,7 +94,6 @@ function Tables() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
       <MDBox pt={3} pb={3}>
         {tables.map((table) => (
             <MDBox pt={2} pb={2} px={3}>

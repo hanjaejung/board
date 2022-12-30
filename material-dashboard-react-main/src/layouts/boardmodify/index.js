@@ -15,24 +15,18 @@ Coded by www.creative-tim.com
 
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 // @mui material components
-import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
-import MDAlert from "components/MDAlert";
 import MDInput from 'components/MDInput';
 import MDButton from "components/MDButton";
-import MDSnackbar from "components/MDSnackbar";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
 
 // Data
 import axios from 'axios';
@@ -40,9 +34,7 @@ import axios from 'axios';
 function BoardModify() {
   const { state } = useLocation();
   console.log(state);
-  const [page, setPage] = useState(0);
   const [title, setTitle] = useState(state.title);
-  const [writer, setWriter] = useState(state.user.userName);
   const [body, setBody] = useState(state.body);
   const [id, setId] = useState(state.id);
   const [open, setOpen] = React.useState(false);
@@ -85,7 +77,6 @@ function BoardModify() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
       <MDBox pt={6} pb={3}>
         <Card>
           <MDBox pt={4} pb={3} px={3}>

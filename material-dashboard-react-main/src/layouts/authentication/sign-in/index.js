@@ -14,7 +14,6 @@ Coded by www.creative-tim.com
 */
 
 import * as React from 'react';
-
 import { useState, useEffect } from "react";
 import {useNavigate} from 'react-router';
 
@@ -63,7 +62,7 @@ function Basic() {
     console.log(password);
 
     axios({
-      url: '/api/sns/users/login',
+      url: '/api/board/users/login',
       method: 'POST',
       data: {
         name: userName,

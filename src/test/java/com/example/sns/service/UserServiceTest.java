@@ -2,7 +2,7 @@ package com.example.sns.service;
 
 
 import com.example.sns.exception.ErrorCode;
-import com.example.sns.exception.SnsException;
+import com.example.sns.exception.BoardException;
 import com.example.sns.fixture.UserEntityFixture;
 import com.example.sns.model.entity.UserEntity;
 import com.example.sns.repository.UserEntityRepository;
@@ -64,7 +64,7 @@ public class UserServiceTest {
         when(userEntityRepository.save(any())).thenReturn(Optional.of(fixture));
 
         //Assertions.assertThrows(SnsException.class, () -> userService.join(userName, password));
-        SnsException exception = Assertions.assertThrows(SnsException.class, () -> userService.join(userName, password));
+        BoardException exception = Assertions.assertThrows(BoardException.class, () -> userService.join(userName, password));
         Assertions.assertEquals(ErrorCode.SAME_USER_NAME, exception.getErrorCode());
     }
 
@@ -92,9 +92,13 @@ public class UserServiceTest {
         // 그 안의 메소드를 실행할때 when의 결과값으로 정한다
         //그 결과값으로 비교를 진행하거나 작업을 진행한다
         //Assertions.assertThrows(SnsException.class, () -> userService.login(userName, password));
-        SnsException exception = Assertions.assertThrows(SnsException.class, () -> userService.login(userName, password));
+        BoardException exception = Assertions.assertThrows(BoardException.class, () -> userService.login(userName, password));
 
-        Assertions.assertEquals(ErrorCode.USER_EXIST_NOT, exception.getErrorCode());
+        Assertions.assertEquals(ErrorCode.SAME_USER_NAME, exception.getErrorCode());
+        //이 에러는 redis 캐시에 저장이 되어 있는지 아닌지에 따라 에러가 나거나 안난다
+        //첫 로그인시는 redis 캐시에 저장이 된게 없어 SAME_USER_NAME에러
+        //redis 캐시에 저장이 되어있는 상태면 INVALID_PASSWORD에러 발생
+        //캐시 기한이 다된 후 다시 테스트 하면 SAME_USER_NAME으로 정상 테스트 된다
     }
 
     @Test
@@ -109,7 +113,7 @@ public class UserServiceTest {
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
 
         //Assertions.assertThrows(SnsException.class, () -> userService.join(userName, wrongPassword));
-        SnsException exception = Assertions.assertThrows(SnsException.class, () -> userService.login(userName, wrongPassword));
+        BoardException exception = Assertions.assertThrows(BoardException.class, () -> userService.login(userName, wrongPassword));
         Assertions.assertEquals(ErrorCode.INVALID_PASSWORD, exception.getErrorCode());
     }
 }

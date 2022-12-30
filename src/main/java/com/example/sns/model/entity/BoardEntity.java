@@ -9,6 +9,7 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 
 @Setter
 @Getter
@@ -31,6 +32,14 @@ public class BoardEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
+    private List<CommentEntity> comments;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
+    private List<LikeEntity> likes;
 
     @Column(name = "created_at")
     private Timestamp createdAt;

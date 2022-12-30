@@ -1,8 +1,10 @@
 package com.example.sns.controller;
 
+import com.example.sns.controller.request.BoardCommentRequest;
 import com.example.sns.controller.request.BoardUpdateRequest;
 import com.example.sns.controller.request.BoardWriteRequest;
 import com.example.sns.controller.response.BoardResponse;
+import com.example.sns.controller.response.CommentResponse;
 import com.example.sns.controller.response.PolymorphismResponse;
 import com.example.sns.model.BoardDto;
 import com.example.sns.service.BoardService;
@@ -46,5 +48,27 @@ public class BoardController {
     @GetMapping("/my")
     public PolymorphismResponse<Page<BoardResponse>> myBoardList(Pageable pageable, Authentication authentication){
         return PolymorphismResponse.success(boardService.myBoardList(authentication.getName(), pageable).map(BoardResponse::boardDtoToBoardResponse));
+    }
+
+    @GetMapping("/{boardId}/likes")
+    public PolymorphismResponse<Integer> getLikes(@PathVariable Long boardId, Authentication authentication) {
+        return PolymorphismResponse.success(boardService.getLikeCount(boardId));
+    }
+
+    @PostMapping("/{boardId}/likes")
+    public PolymorphismResponse<Void> like(@PathVariable Long boardId, Authentication authentication) {
+        boardService.like(boardId, authentication.getName());
+        return PolymorphismResponse.success();
+    }
+
+    @GetMapping("/{boardId}/comments")
+    public PolymorphismResponse<Page<CommentResponse>> getComments(Pageable pageable, @PathVariable Long boardId) {
+        return PolymorphismResponse.success(boardService.getComments(boardId, pageable).map(CommentResponse::commentDtoToCommentResponse));
+    }
+
+    @PostMapping("/{boardId}/comments")
+    public PolymorphismResponse<Void> comment(@PathVariable Long boardId, @RequestBody BoardCommentRequest request, Authentication authentication) {
+        boardService.comment(boardId, authentication.getName(), request.getComment());
+        return PolymorphismResponse.success();
     }
 }

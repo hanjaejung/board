@@ -15,12 +15,6 @@ Coded by www.creative-tim.com
 
 // @mui material components
 import Grid from "@mui/material/Grid";
-import Divider from "@mui/material/Divider";
-
-// @mui icons
-import FacebookIcon from "@mui/icons-material/Facebook";
-import TwitterIcon from "@mui/icons-material/Twitter";
-import InstagramIcon from "@mui/icons-material/Instagram";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -28,28 +22,8 @@ import MDTypography from "components/MDTypography";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
-import ProfileInfoCard from "examples/Cards/InfoCards/ProfileInfoCard";
-import ProfilesList from "examples/Lists/ProfilesList";
-import DefaultProjectCard from "examples/Cards/ProjectCards/DefaultProjectCard";
-
-// Overview page components
-import Header from "layouts/myboards/components/Header";
-import PlatformSettings from "layouts/myboards/components/PlatformSettings";
-
-// Data
-import profilesListData from "layouts/myboards/data/profilesListData";
 
 // Images
-import homeDecor1 from "assets/images/home-decor-1.jpg";
-import homeDecor2 from "assets/images/home-decor-2.jpg";
-import homeDecor3 from "assets/images/home-decor-3.jpg";
-import homeDecor4 from "assets/images/home-decor-4.jpeg";
-import team1 from "assets/images/team-1.jpg";
-import team2 from "assets/images/team-2.jpg";
-import team3 from "assets/images/team-3.jpg";
-import team4 from "assets/images/team-4.jpg";
 import {useEffect, useState} from "react";
 import * as React from "react";
 import {useNavigate} from "react-router";
@@ -63,15 +37,10 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 function MyBoard() {
 
     const [page, setPage] = useState(0);
-    const [render, setRender] = useState(false);
     const [tables, setTables] = useState([]);
     const [totalPage, setTotalPage] = useState(0);
 
-    const [title, setTitle] = useState('');
-    const [body, setBody] = useState('');
     const [open, setOpen] = React.useState(false);
-    const [dialogTitle, setDialogTitle] = React.useState('');
-    const [dialogMessage, setDialogMessage] = React.useState('');
     const navigate = useNavigate();
 
     const handleModify = (table) => {
@@ -144,7 +113,6 @@ function MyBoard() {
 
     return (
         <DashboardLayout>
-            <DashboardNavbar />
             <MDBox pt={3} pb={3}>
                 {tables.map((table) => (
                     <MDBox pt={2} pb={2} px={3}>
@@ -164,7 +132,7 @@ function MyBoard() {
                                 </Grid>
                                 <MDTypography variant="body2">{table.body}</MDTypography>
                                 <Grid container>
-                                    <Grid item xs={9}></Grid>
+                                    <Grid item xs={10}></Grid>
                                     <Grid item xs={1}>
                                         <Button onClick={() => handleModify(table)}>Modify</Button>
                                     </Grid>

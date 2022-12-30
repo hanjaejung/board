@@ -5,13 +5,13 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SnsException extends RuntimeException{
+public class BoardException extends RuntimeException{
 
     private ErrorCode errorCode;
     private String message;
 
     //errorCode만 있을 경우
-    public SnsException(ErrorCode errorCode){
+    public BoardException(ErrorCode errorCode){
         this.errorCode = errorCode;
         this.message = null;
     }
