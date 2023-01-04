@@ -26,9 +26,9 @@ Java, Spring Boot, IntelliJ, Gradle, Jpa, MySQL, Redis, Docker
 ![image](https://user-images.githubusercontent.com/51894013/210524963-7814c155-2fd5-477f-8ba3-fc72bad2069e.png)
 
 # Flow chart
-상세 페이지 : 
+상세 페이지 : https://github.com/hanjaejung/board/wiki/Flow-chart  
 
-1. 회원가입
+1. 회원가입  
 ![image](https://user-images.githubusercontent.com/51894013/210577600-bd13b05a-071a-4baf-8608-c058b9e32c48.png)
 
 
