@@ -9,6 +9,7 @@ https://www.creative-tim.com/product/material-dashboard-react
 Java, Spring Boot, IntelliJ, Gradle, Jpa, MySQL, Redis, Docker
 
 # Application UI
+상세페이지 : https://github.com/hanjaejung/board/wiki/Board-UI
 ![image](https://user-images.githubusercontent.com/51894013/210523410-b2d9a823-850e-4508-95b3-d15b71820a62.png)
 
 
