@@ -20,3 +20,8 @@ Java, Spring Boot, IntelliJ, Gradle, Jpa, MySQL, Redis, Docker
 
 # APPLICATION Architecture
 ![image](https://user-images.githubusercontent.com/51894013/210354405-d690b316-0617-477c-b5ef-41345c308d23.png)
+
+# ERD
+상세 페이지 : 
+![image](https://user-images.githubusercontent.com/51894013/210524963-7814c155-2fd5-477f-8ba3-fc72bad2069e.png)
+
