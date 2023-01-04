@@ -25,3 +25,5 @@ Java, Spring Boot, IntelliJ, Gradle, Jpa, MySQL, Redis, Docker
 상세 페이지 : https://github.com/hanjaejung/board/wiki/ERD
 ![image](https://user-images.githubusercontent.com/51894013/210524963-7814c155-2fd5-477f-8ba3-fc72bad2069e.png)
 
+# Flow chart
+
