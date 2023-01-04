@@ -28,4 +28,8 @@ Java, Spring Boot, IntelliJ, Gradle, Jpa, MySQL, Redis, Docker
 # Flow chart
 상세 페이지 : 
 
+1. 회원가입
+![image](https://user-images.githubusercontent.com/51894013/210577600-bd13b05a-071a-4baf-8608-c058b9e32c48.png)
+
+
 
