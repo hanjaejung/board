@@ -3,6 +3,7 @@ package com.example.sns.configuration;
 import com.example.sns.model.UserDto;
 import io.lettuce.core.RedisURI;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,13 +19,19 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @RequiredArgsConstructor
 public class RedisConfiguration {
 
+    @Value("${spring.redis.host}")
+    private String host;
+
+    @Value("${spring.redis.port}")
+    private Integer port;
+
     private final RedisProperties redisProperties;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory(){
         //RedisURI redisURI = RedisURI.create(redisProperties.getUrl());
         //org.springframework.data.redis.connection.RedisConfiguration configuration = LettuceConnectionFactory.createRedisConfiguration(redisURI);
-        LettuceConnectionFactory factory = new LettuceConnectionFactory("localhost", 6379);
+        LettuceConnectionFactory factory = new LettuceConnectionFactory(host, port);
         factory.afterPropertiesSet();
         return factory;
     }

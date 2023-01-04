@@ -28,6 +28,8 @@ public class AuthenticationConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().regexMatchers("^(?!/api/).*") // /api로 시작하는것만 통과(프론트에 있는 url이 자꾸걸려 추가)
                 .antMatchers(HttpMethod.POST, "/api/*/users/join", "/api/*/users/login");
+        //홈페이지에 접근 가능하게 해준다
+        //DefaultLoginPageGenerationFilter
 
     }
 
