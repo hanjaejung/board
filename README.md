@@ -1,5 +1,7 @@
 # 대댓글 기능 추가(2023-11-28)
 ![image](https://github.com/hanjaejung/board/assets/51894013/6debba6e-803b-4da6-8bda-a21c75829574)
+대댓글 ERD 추가
+![image](https://github.com/hanjaejung/board/assets/51894013/1c5a44d8-8457-49f1-aa89-4c7cc9402505)
 
 
 # board
