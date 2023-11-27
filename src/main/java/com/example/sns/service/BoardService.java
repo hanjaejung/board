@@ -4,14 +4,9 @@ import com.example.sns.exception.ErrorCode;
 import com.example.sns.exception.BoardException;
 import com.example.sns.model.BoardDto;
 import com.example.sns.model.CommentDto;
-import com.example.sns.model.entity.BoardEntity;
-import com.example.sns.model.entity.CommentEntity;
-import com.example.sns.model.entity.LikeEntity;
-import com.example.sns.model.entity.UserEntity;
-import com.example.sns.repository.BoardEntityRepository;
-import com.example.sns.repository.CommentEntityRepository;
-import com.example.sns.repository.LikeEntityRepository;
-import com.example.sns.repository.UserEntityRepository;
+import com.example.sns.model.ReplyDto;
+import com.example.sns.model.entity.*;
+import com.example.sns.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +24,8 @@ public class BoardService {
     private final UserEntityRepository userEntityRepository;
     private final LikeEntityRepository likeEntityRepository;
     private final CommentEntityRepository commentEntityRepository;
+
+    private final ReplyEntityRepository replyEntityRepository;
 
     @Transactional
     public void write(String title, String body, String userName){
@@ -139,5 +136,24 @@ public class BoardService {
         BoardEntity boardEntity = boardEntityRepository.findById(boardId).orElseThrow(() ->
                 new BoardException(ErrorCode.BOARD_NOT_FOUND, String.format("%s not founded", "boardId")));
         return commentEntityRepository.findAllByBoard(boardEntity, pageable).map(CommentDto::entityToDto);
+    }
+
+    @Transactional
+    public void reply(Long commentId, String userName, String reply) {
+
+        CommentEntity commentEntity = commentEntityRepository.findById(commentId).orElseThrow(() ->
+                new BoardException(ErrorCode.COMMENT_NOT_FOUND, String.format("%s not founded", "commentId")));
+        UserEntity userEntity = userEntityRepository.findByUserName(userName)
+                .orElseThrow(() ->
+                        new BoardException(ErrorCode.USER_EXIST_NOT, String.format("%s do not exist", userName)));
+
+        replyEntityRepository.save(ReplyEntity.of(commentEntity, reply, userEntity));
+    }
+
+    public Page<ReplyDto> getReplyComments(Long commentId, Pageable pageable) {
+        CommentEntity commentEntity = commentEntityRepository.findById(commentId).orElseThrow(() ->
+                new BoardException(ErrorCode.COMMENT_NOT_FOUND, String.format("%s not founded", "commentId")));
+
+        return replyEntityRepository.findAllByComment(commentEntity, pageable).map(ReplyDto::entityToDto);
     }
 }

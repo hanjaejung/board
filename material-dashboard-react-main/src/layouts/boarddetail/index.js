@@ -50,6 +50,14 @@ function BoardDetail() {
   const [totalPage, setTotalPage] = useState(0);
   const [comment, setComment] = useState();
 
+  //대댓글
+    const [reply, setReply] = useState([]);
+    const [replyStyle, setReplyStyle] = useState({display: 'none'});
+
+    const [replyComments, setReplyComments] = useState([]);
+
+    const [replyCommentPicks, setCommentPicks] = useState([]);
+
   const handleLikePost = (event) => {
     console.log(localStorage.getItem('token'));
     axios({
@@ -135,6 +143,66 @@ function BoardDetail() {
         });
   };
 
+  const handlerWriteReply = (commentId, event) => {
+      console.log('handlerWriteReply');
+      console.log(commentId);
+      console.log(event);
+      axios({
+          url: '/api/board/' + commentId + '/reply',
+          method: 'POST',
+          headers: {
+              Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+          data: {
+              reply: reply,
+          },
+      })
+          .then((res) => {
+              console.log('success');
+              handleGetReplys(0,commentId);
+          })
+          .catch((error) => {
+              console.log(error);
+          });
+  };
+
+  const handleReplyStyle = (commentId, event) => {
+
+      // if(replyStyle.display === 'block'){
+      //
+      //     setReplyStyle({display: 'none'});
+      // }else{
+      //     setReplyStyle({display: 'block'});
+      //     handleGetReplys(0,commentId);
+      // }
+
+      if(replyCommentPicks.length == 0){
+          handleGetReplys(0,commentId);
+      }else {
+          setCommentPicks('');
+      }
+
+  };
+
+  const handleGetReplys = (pageNum, id, event) => {
+      console.log('handleGetReplys');
+      axios({
+          url: '/api/board/' + id + '/replyComments?size=5&sort=id&page=' + pageNum,
+          method: 'GET',
+          headers: {
+              Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+      })
+          .then((res) => {
+              console.log('success');
+              console.log(res);
+              setReplyComments(res.data.result.content);
+              setCommentPicks(id);
+          })
+          .catch((error) => {
+              console.log(error);
+          });
+  };
   useEffect(() => {
     handleGetComments();
     handleLikeCounts();
@@ -168,11 +236,10 @@ function BoardDetail() {
       </MDBox>
 
       <MDButton onClick={handleLikePost} variant="gradient" color="info">
-        LIKE
+        LIKE1
       </MDButton>
-
       {comments.map((comment) => (
-          <MDBox pt={2} pb={2}>
+          <MDBox pt={4} pb={4}>
             <Card>
               <MDBox pt={2} pb={2} px={3}>
                 <Grid container>
@@ -189,6 +256,44 @@ function BoardDetail() {
                 </Grid>
                 <MDTypography variant="body2">{comment.body}</MDTypography>
               </MDBox>
+                <MDBox pt={2} pb={2} px={3} right>
+                    <MDButton onClick={(e) => handleReplyStyle(comment.id,e)} variant="gradient" color="info">
+                        Reply
+                    </MDButton>
+                </MDBox>
+                {replyComments.filter(replyComment => comment.id === replyComment.commentId).map((replyComment) => (
+                    <MDBox pt={2} pb={2} px={3}>
+                        <Grid container style={comment.id === replyCommentPicks ? {display : "block"} : {display : "none"}}>
+                            <Grid item xs={6}>
+                                <MDTypography fontWeight="bold" variant="body2">
+                                    {replyComment.replyComment}
+                                </MDTypography>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <MDTypography variant="body2" textAlign="right">
+                                    {replyComment.userName}
+                                </MDTypography>
+                            </Grid>
+                        </Grid>
+                        <MDTypography variant="body2">{comment.body}</MDTypography>
+                    </MDBox>
+
+                ))}
+
+                <MDBox component="form" role="form" >
+                    <MDBox pt={2} pb={2} px={3}>
+                        <MDInput label="reply" onChange={(v) => setReply(v.target.value)} fullWidth style={comment.id === replyCommentPicks ? {display : "block"} : {display : "none"}}/>
+                    </MDBox>
+                    <MDBox pt={2} pb={2} px={3} right>
+                        <MDButton onClick={(e) => handlerWriteReply(comment.id,e)} variant="gradient" color="info" style={comment.id === replyCommentPicks ? {display : "block"} : {display : "none"}} >
+                            ReplyWrite
+                        </MDButton>
+                    </MDBox>
+                </MDBox>
+
+
+
+
             </Card>
           </MDBox>
       ))}

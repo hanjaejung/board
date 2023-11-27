@@ -3,10 +3,14 @@ package com.example.sns.controller;
 import com.example.sns.controller.request.BoardCommentRequest;
 import com.example.sns.controller.request.BoardUpdateRequest;
 import com.example.sns.controller.request.BoardWriteRequest;
+import com.example.sns.controller.request.ReplyCommentRequest;
 import com.example.sns.controller.response.BoardResponse;
 import com.example.sns.controller.response.CommentResponse;
 import com.example.sns.controller.response.PolymorphismResponse;
+import com.example.sns.controller.response.ReplyCommentsResponse;
 import com.example.sns.model.BoardDto;
+import com.example.sns.model.ReplyDto;
+import com.example.sns.model.entity.ReplyEntity;
 import com.example.sns.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/board")
@@ -70,5 +76,17 @@ public class BoardController {
     public PolymorphismResponse<Void> comment(@PathVariable Long boardId, @RequestBody BoardCommentRequest request, Authentication authentication) {
         boardService.comment(boardId, authentication.getName(), request.getComment());
         return PolymorphismResponse.success();
+    }
+
+    @PostMapping("/{commentId}/reply")
+    public PolymorphismResponse<Void> reply(@PathVariable Long commentId, @RequestBody ReplyCommentRequest request, Authentication authentication) {
+        boardService.reply(commentId, authentication.getName(), request.getReply());
+        return PolymorphismResponse.success();
+    }
+
+    @GetMapping("/{commentId}/replyComments")
+    public PolymorphismResponse<Page<ReplyCommentsResponse>> getReplyComments(Pageable pageable, @PathVariable Long commentId) {
+
+        return PolymorphismResponse.success(boardService.getReplyComments(commentId, pageable).map(ReplyCommentsResponse::replyDtoToReplyResponse));
     }
 }
